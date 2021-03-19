@@ -1,0 +1,24 @@
+.Card {
+  width: 300px;
+  padding: 10px;
+  margin: 10px;
+  float: left;
+  background-color: rgb(240, 215, 107);
+  -webkit-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+  box-shadow: 1px 1px 2px 0px rgba(50, 50, 50, 0.75);
+}
+
+h1 {
+  text-align: center;
+}
+
+.typeContainer {
+  background-color: lightseagreen;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 5px;
+  color: lightyellow;
+  font-weight: bold;
+  text-align: center;
+}
