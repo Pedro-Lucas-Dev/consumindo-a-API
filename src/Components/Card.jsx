@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Card.css";
 
-export const Card = ({ pokemon }) => {
+import { Pokemon } from "./Pokemon";
+
+export const Card = ({ pokemon, showAll }) => {
+  useEffect(() => {
+    setShowEvolutions(showAll);
+  }, [showAll]);
+  const [showEvolutions, setShowEvolutions] = useState(false);
+
   return (
     <div className="Card">
-      <h1>{pokemon.name}</h1>
-      <img src={pokemon.img} width="300" height="300" />
-      <div>
-        <div className={"typeContainer"}>
-          <p>{pokemon.type}</p>
+      <Pokemon data={pokemon}>
+        <div className={"btnEvolutionAction"}>
+          <button onClick={() => setShowEvolutions(!showEvolutions)}>
+            {!showEvolutions ? "Exibir" : "Ocultar"}
+          </button>
         </div>
-      </div>
+      </Pokemon>
+      {showEvolutions &&
+        pokemon.evolutions.map((pokemonEvolution) => (
+          <Pokemon key={pokemonEvolution.id} data={pokemonEvolution} />
+        ))}
     </div>
   );
 };

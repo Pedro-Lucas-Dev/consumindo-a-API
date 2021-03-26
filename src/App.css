@@ -1,3 +1,18 @@
 body {
-  background-color: gainsboro;
+  background-color: rgb(71, 27, 75);
+  display: flex;
+  justify-content: center;
+  margin-top: 300px;
+  background-color: #005b96;
+}
+
+.Box {
+  width: 300px;
+  height: 190px;
+  padding: 30px;
+  border-radius: 5px;
+  background-image: linear-gradient(#36d1dc, #5b86e5);
+  color: rgb(71, 27, 75);
+  display: flex;
+  align-items: center;
 }
