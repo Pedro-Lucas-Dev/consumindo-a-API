@@ -1,69 +1,90 @@
 import React, { useState } from "react";
-import axios from "axios";
-// import { Card } from "./Components/Card";
+import { Card } from "./Components/Card/Card";
+import { RenderForm } from "./Components/Form/RenderForm";
 import "./App.css";
+import { getPokemonsService } from "./Components/services/pokemon";
 
 function App() {
-  const [form, setForm] = useState({
-    number: "",
-    name: "",
-    type: "",
-    color: "",
-  });
-
-  const ref = React.useRef();
-
-  const getAll = () => {
-    const { number, name, type, color } = form;
-
-    const Data = {
-      pokemon: {
-        id: number,
-        name: name,
-        type: type,
-        color: color,
-        evolutions: [],
-      },
-    };
-    axios.post("http://localhost:3001/api/pokemon", Data).then((response) => {
-      console.log(response);
+  const [pokemonSelect, setPokemonSelect] = useState({});
+  const [formIsVisible, setFormIsVisible] = useState(true);
+  const [pokemons, setPokemons] = useState([]);
+  const [evolutions, setEvolutions] = useState([]);
+  const [showEvolutionForm, setShowEvolutionForm] = useState(false);
+  const getAllPokemons = () => {
+    getPokemonsService().then((response) => {
+      setPokemons(response.data);
+      setFormIsVisible(false);
     });
   };
 
-  const handleChange = (event, inputName) => {
-    setForm({ ...form, [inputName]: event.target.value }, () =>
-      event.input.focus()
-    );
-    event.preventDefault();
+  const togglePokemon = () => {
+    if (formIsVisible === true) {
+      return getAllPokemons();
+    }
+    return setFormIsVisible(true);
   };
 
-  const RenderInput = ({ label, inputName }) => {
-    console.log(inputName);
-    return (
-      <div>
-        <label>{label}</label>
-        <br />
-        <input
-          ref={(inputName) => ref}
-          type="text"
-          name={inputName}
-          placeholder={label}
-          value={form[inputName]}
-          onChange={(e) => handleChange(e, inputName)}
-        />
-      </div>
-    );
+  const evolutionClick = (pokemonSelecionado) => {
+    setPokemonSelect(pokemonSelecionado);
+    setFormIsVisible(true);
+  };
+
+  const onPressAddEvolution = (form) => {
+    const evolutionsInState = evolutions;
+    evolutionsInState.push(form);
+    console.log(evolutionsInState);
+    setEvolutions(evolutionsInState);
+    setShowEvolutionForm(false);
   };
 
   return (
-    <div className="Box">
+    <div>
+      <RenderForm
+        formIsVisible={formIsVisible}
+        pokemonSelect={pokemonSelect}
+        evolutions={evolutions}
+        labelBtn={"Cadastrar"}
+        typeForm={"add_pokemon"}
+        onSubmitFinish={() => setEvolutions([])}
+      />
       <div>
-        {<RenderInput label={"Numero"} inputName={"number"} />}
-        {<RenderInput label={"Nome"} inputName={"name"} />}
-        {<RenderInput label={"Tipo"} inputName={"type"} />}
-        {<RenderInput label={"Cor"} inputName={"color"} />}
+        <button onClick={() => togglePokemon()}>
+          {" "}
+          {formIsVisible ? "Mostrar" : "Ocultar"} Pokemons{" "}
+        </button>
       </div>
-      <button onClick={() => getAll()}>Cadastrar</button>
+      <div style={{ color: "yellow", fontWeight: "bold", float: "right" }}>
+        <p>Evolucoes</p>
+        {evolutions.map((evolution) => (
+          <p key={evolution.id}> - {evolution.name}</p>
+        ))}
+        <button onClick={() => setShowEvolutionForm(!showEvolutionForm)}>
+          adicionar Nova Evolucao
+        </button>
+        {showEvolutionForm ? (
+          <RenderForm
+            formIsVisible={formIsVisible}
+            pokemonSelect={pokemonSelect}
+            labelBtn={"Inserir"}
+            typeForm={"add_evolution"}
+            onPressAddEvolution={(form) => onPressAddEvolution(form)}
+          />
+        ) : null}
+      </div>
+      {!formIsVisible
+        ? pokemons.map((pokemon) => {
+            return (
+              <Card
+                key={pokemon.id}
+                pokemon={pokemon}
+                onClickEvolution={(pokemonSelecionado) =>
+                  evolutionClick(pokemonSelecionado)
+                }
+                onRefresh={getAllPokemons}
+              />
+            );
+          })
+        : null}
     </div>
   );
 }
